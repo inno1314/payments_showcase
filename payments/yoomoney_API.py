@@ -21,7 +21,7 @@ class AsyncYoomoneyAPI:
     async def create_payment(
         self,
         amount: float,
-        targets: str = "Цифровая услуга",
+        targets: str = "Название вашего приложения",
         paymentType: str = "SB",
     ) -> Tuple[str, str]:
         """

@@ -8,7 +8,6 @@ load_dotenv()
 
 
 db = UsersDataBase(r"database/tgbot_users.sqlite3")
-admins = []
 
 BOT_TOKEN = str(getenv("BOT_TOKEN"))
 YOOMONEY_TOKEN = str(getenv('YOOMONEY_TOKEN'))
