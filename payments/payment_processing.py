@@ -27,13 +27,13 @@ async def process_payment(
 ):
     """
     Проверяет оплату во всех платежных системах
-    :param call: aiogram.types.Message
+    :param message: aiogram.types.Message
     :param price: Сумма создаваемого платежа
     :param system: Система, в которой совершается платеж.
     """
     user_id = message.from_user.id
-
     client = clients[system]
+
     url, payment_id = await client.create_payment(amount=price)
     await db.create_payment(
         user_id=user_id,
@@ -66,6 +66,7 @@ async def process_payment(
                 return
 
             if await client.is_success(payment_id):
+                # Обработка успешного платежа
                 await client.close()
                 await db.change_payment_status(
                     payment_id=payment_id,
@@ -76,7 +77,9 @@ async def process_payment(
                 new_balance = current_balance + price
                 await db.update_balance(user_id=user_id, amount=new_balance)
                 await new_msg.edit_text(f"Успех! Ваш баланс: {new_balance}")
+                return
             elif await client.is_expired(payment_id):
+                # Обработка истекшего платежа
                 await db.change_payment_status(
                     payment_id=payment_id,
                     status="expired",
@@ -92,7 +95,7 @@ async def process_payment(
             logger.info(f"Ошибка в процессе обработки платежа в {system}: {e}")
 
     # Время ожидания истекло
-    logger.info(f"timeout for {system} payment from user {user_id}")
+    logger.info(f"Время оплаты в {system} для пользователя {user_id} истекло")
     await client.close()
     await db.change_payment_status(
         payment_id=payment_id,
