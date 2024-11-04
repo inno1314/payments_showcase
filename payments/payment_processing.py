@@ -27,7 +27,7 @@ async def process_payment(
 ):
     """
     Проверяет оплату во всех платежных системах
-    :param call: aiogram.types.CallbackQuery
+    :param call: aiogram.types.Message
     :param price: Сумма создаваемого платежа
     :param system: Система, в которой совершается платеж.
     """
